@@ -14,6 +14,7 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
+
 import com.example.telegramclone.fragments.CallsFragment;
 import com.example.telegramclone.fragments.ContactsFragment;
 import com.example.telegramclone.fragments.InviteFriendsFragment;
@@ -55,7 +56,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     ).commit();
             navigationView.setCheckedItem(R.id.nav_view);
         }
+
+
+
     }
+
 
     @Override
     public void onBackPressed() {

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1044558950276",
+    "project_id": "teleclone-7ff44",
+    "storage_bucket": "teleclone-7ff44.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1044558950276:android:558c9a3b13c298f154f7d1",
+        "android_client_info": {
+          "package_name": "com.example.telegramclone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1044558950276-j3aeqvea93cuj3tpf5k56287qtm5lsqb.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCCcgRpst8QX55bwxtrcEtJXSYoxlDB_f4"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1044558950276-j3aeqvea93cuj3tpf5k56287qtm5lsqb.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
