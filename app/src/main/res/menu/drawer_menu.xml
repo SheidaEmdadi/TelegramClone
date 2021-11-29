@@ -7,19 +7,19 @@
     <group android:checkableBehavior="single">
 
         <item
-            android:id="@+id/group_item"
+            android:id="@+id/chat_screen_item"
             android:icon="@drawable/ic_group"
-            android:title="New Group" />
+            android:title="Chats" />
 
         <item
-            android:id="@+id/contacts_item"
+            android:id="@+id/followed_users_item"
             android:icon="@drawable/ic_outline_person_24"
-            android:title="Contacts" />
+            android:title="Following" />
 
         <item
-            android:id="@+id/call_item"
-            android:icon="@drawable/ic_call"
-            android:title="Calls" />
+            android:id="@+id/all_users_item"
+            android:icon="@drawable/users"
+            android:title="All users" />
 
         <item
             android:id="@+id/saved_msg_item"
@@ -40,6 +40,10 @@
                 android:id="@+id/invite_item"
                 android:icon="@drawable/ic_person_add"
                 android:title="Invite Friends" />
+            <item
+                android:id="@+id/logout_item"
+                android:icon="@drawable/logout"
+                android:title="Log out"/>
         </menu>
     </item>
 

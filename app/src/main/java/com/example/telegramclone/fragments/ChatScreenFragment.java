@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckedTextView;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -20,20 +21,23 @@ import com.example.telegramclone.ChatActivity;
 import com.example.telegramclone.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class ChatScreenFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private ListView listView;
     private ArrayList<String> arrayList;
     private ArrayAdapter arrayAdapter;
 //    private String followedUser;
 
-    public ContactsFragment() {
+    public ChatScreenFragment() {
         // Required empty public constructor
     }
 
@@ -41,7 +45,7 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+        View view = inflater.inflate(R.layout.fragment_chat_screen, container, false);
 
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refreshLayout);
@@ -52,40 +56,63 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         TextView txtLoadingUsers = view.findViewById(R.id.txtLoadingUsers);
 
-        listView.setOnItemClickListener(ContactsFragment.this);
-        listView.setOnItemLongClickListener(ContactsFragment.this);
+        listView.setOnItemClickListener(ChatScreenFragment.this);
+        listView.setOnItemLongClickListener(ChatScreenFragment.this);
         try {
-            ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
-            parseQuery.whereContainedIn("username", ParseUser.getCurrentUser().getList("following"));
 
-//            parseQuery.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+            ParseQuery<ParseObject> query = new ParseQuery("User");
+            query.setLimit(1000);
+            query.whereEqualTo("username", ParseUser.getCurrentUser());
+            ParseQuery<ParseObject> parseInnerQuery = new ParseQuery<>("Chats");
+
+
+
+            ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+            parseQuery.whereContainedIn("username", ParseUser.getCurrentUser().getList("chatList"));
+
             parseQuery.findInBackground(new FindCallback<ParseUser>() {
                 @Override
-                public void done(List<ParseUser> users, ParseException e) {
-                    try {
-                        if (e == null) {
-                            if (users.size() > 0) {
-                                for (ParseUser user : users) {
-                                    arrayList.add(user.getUsername());
-                                }
-                                listView.setAdapter(arrayAdapter);
-                                txtLoadingUsers.animate().alpha(0).setDuration(2000);
-                                listView.setVisibility(View.VISIBLE);
+                public void done(List<ParseUser> objects, ParseException e) {
 
+                    if (objects.size() > 0) {
+                        if (e == null) {
+                            for (ParseUser user : objects) {
+                                arrayList.add(user.getUsername());
+                            }
+                            arrayAdapter.notifyDataSetChanged();
+                            if (swipeRefreshLayout.isRefreshing()) {
+                                swipeRefreshLayout.setRefreshing(false);
                             }
                         }
-                    } catch (Exception ex) {
-                        ex.printStackTrace();
+                    } else {
+                        if (swipeRefreshLayout.isRefreshing()) {
+                            swipeRefreshLayout.setRefreshing(false);
+                        }
                     }
 
+                }
+            });
+
+
+            ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+                @Override
+                public void done(ParseException e) {
+                    if (e == null) {
+                        FancyToast.makeText(getContext(), "saved", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
+
+                    } else {
+                        FancyToast.makeText(getContext(), e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+
+                    }
+                }
+            });
+            //todo inam dorost kon
                     swipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
                         @Override
                         public void onRefresh() {
                             ParseQuery<ParseUser> parseQuery1 = ParseUser.getQuery();
                             parseQuery1.whereContainedIn("username", ParseUser.getCurrentUser().getList("following"));
-
                             parseQuery1.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
-
                             parseQuery1.whereNotContainedIn("username", arrayList);
                             parseQuery1.findInBackground(new FindCallback<ParseUser>() {
                                 @Override
@@ -112,9 +139,6 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
                         }
                     });
 
-                }
-            });
-
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -125,15 +149,62 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
     }
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-        Intent intent = new Intent(getActivity(), ChatActivity.class);
-        intent.putExtra("selectedUser",arrayList.get(position));
-        startActivity(intent);
+        ParseQuery<ParseUser> parseQuery1 = ParseUser.getQuery();
+        parseQuery1.whereContainedIn("username", ParseUser.getCurrentUser().getList("following"));
+        parseQuery1.whereNotEqualTo("username", ParseUser.getCurrentUser().getUsername());
+        parseQuery1.whereNotContainedIn("username", arrayList);
+        parseQuery1.findInBackground(new FindCallback<ParseUser>() {
+            @Override
+            public void done(List<ParseUser> objects, ParseException e) {
+                if (objects.size() > 0) {
+                    if (e == null) {
+                        for (ParseUser user : objects) {
+                            arrayList.add(user.getUsername());
+//                            ParseUser.getCurrentUser().getList("chatList").remove(arrayList.get(position));
+                            List currentUserChattingList = ParseUser.getCurrentUser().getList("chatList");
+                            ParseUser.getCurrentUser().remove("chatList");
+                            ParseUser.getCurrentUser().put("chatList", currentUserChattingList);
+                        }
+                        arrayAdapter.notifyDataSetChanged();
+
+                    }
+                } else {
+                    ParseUser.getCurrentUser().add("chatList", arrayList.get(position));
+
+                }
+            }
+        });
+//        if (checkedTextView.isChecked()) {
+//            FancyToast.makeText(getContext(), arrayList.get(position) + " is followed", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
+//            ParseUser.getCurrentUser().add("chatList", arrayList.get(position));
+//        } else {
+////            FancyToast.makeText(getContext(), arrayList.get(position) + " is unfollowed", FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+//            ParseUser.getCurrentUser().getList("chatList").remove(arrayList.get(position));
+//            List currentUserChattingList = ParseUser.getCurrentUser().getList("chatList");
+//            ParseUser.getCurrentUser().remove("chatList");
+//            ParseUser.getCurrentUser().put("chatList", currentUserChattingList);
+//        }
+
+        ParseUser.getCurrentUser().saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                if (e == null) {
+
+                } else {
+                    FancyToast.makeText(getContext(), e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+
+                }
+            }
+        });
     }
 
 
     @Override
     public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        return false;
+        Intent intent = new Intent(getActivity(), ChatActivity.class);
+        intent.putExtra("selectedUser",arrayList.get(position));
+        startActivity(intent);
+        return true;
     }
 
 //    @Override

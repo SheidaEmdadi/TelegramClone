@@ -1,44 +1,83 @@
 package com.example.telegramclone;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.os.Build;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
 
-import com.example.telegramclone.fragments.CallsFragment;
+import com.example.telegramclone.fragments.AllUsersFragment;
 import com.example.telegramclone.fragments.ContactsFragment;
 import com.example.telegramclone.fragments.InviteFriendsFragment;
 import com.example.telegramclone.fragments.NewGroupFragment;
 import com.example.telegramclone.fragments.SavedMessagesFragment;
 import com.example.telegramclone.fragments.SettingsFragment;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
+import com.parse.GetCallback;
+import com.parse.LogOutCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
-    private DrawerLayout drawer;
+    DrawerLayout drawer;
+    NavigationView navigationView;
+    TextView txtUserNameDrawer;
+    String name;
+//    TextView txt;
 
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+
+        Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        navigationView = findViewById(R.id.nav_view);
         drawer = findViewById(R.id.drawer_layout);
+//        txt = findViewById(R.id.txttes);
+
+        View header = navigationView.getHeaderView(0);
+        txtUserNameDrawer = (TextView) header.findViewById(R.id.username_drawer);
+
+
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        ParseUser user = new ParseUser();
+        String objId = user.getObjectId();
+
+//        ParseQuery<ParseObject> query = ParseQuery.getQuery("User");
+//        query.getInBackground(objId, new GetCallback<ParseObject>() {
+//            @Override
+//            public void done(ParseObject object, ParseException e) {
+//                if (object != null && e == null) {
+//                    name = object.get("username").toString();
+////                   txt.setText(name);
+//                    //todo: profile name
+//                } else if (e != null) {
+//                    Toast.makeText(MainActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+//                }
+//            }
+//        });
+//        txtUserNameDrawer.setText(name);
+
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
                 drawer,
@@ -57,6 +96,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             navigationView.setCheckedItem(R.id.nav_view);
         }
 
+//        FloatingActionButton fab = findViewById(R.id.fabChat);
+//        fab.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(MainActivity.this, Users.class);
+//                startActivity(intent);
+//            }
+//        });
 
 
     }
@@ -91,8 +138,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu, menu);
-
-
         return super.onCreateOptionsMenu(menu);
     }
 
@@ -100,21 +145,23 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.group_item:
+            case R.id.chat_screen_item:
 
                 getSupportFragmentManager().beginTransaction().
                         replace(R.id.fragment_container,
                                 new NewGroupFragment()
                         ).commit();
+//                Intent mintent = new Intent(MainActivity.this, ChatScreenActivity.class);
+//                startActivity(mintent);
                 break;
-            case R.id.call_item:
+            case R.id.all_users_item:
 
                 getSupportFragmentManager().beginTransaction().
                         replace(R.id.fragment_container,
-                                new CallsFragment()
+                                new AllUsersFragment()
                         ).commit();
                 break;
-            case R.id.contacts_item:
+            case R.id.followed_users_item:
 
                 getSupportFragmentManager().beginTransaction().
                         replace(R.id.fragment_container,
@@ -142,6 +189,17 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                                 new SettingsFragment()
                         ).commit();
                 break;
+            case R.id.logout_item:
+
+                ParseUser.getCurrentUser().logOutInBackground(new LogOutCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        Intent intent = new Intent(MainActivity.this, Login.class);
+                        startActivity(intent);
+                        finish();
+                    }
+                });
+                break;
 
 
         }
@@ -150,3 +208,8 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         return true;
     }
 }
+
+//todo: tu safe asli vaqti back mizani az acc logout nashe
+//todo 2: ax profile
+//todo 3 : esm profile namayesh nemide
+//todo 4 : ta yekio follow nakoni nemitoni bahash chat koni
