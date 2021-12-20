@@ -13,7 +13,7 @@
 
         <item
             android:id="@+id/followed_users_item"
-            android:icon="@drawable/ic_outline_person_24"
+            android:icon="@drawable/ic_profile"
             android:title="Following" />
 
         <item
@@ -22,24 +22,24 @@
             android:title="All users" />
 
         <item
-            android:id="@+id/saved_msg_item"
-            android:icon="@drawable/ic_save_msg"
-            android:title="Saved Messages" />
+            android:id="@+id/profile_item"
+            android:icon="@drawable/ic_profile"
+            android:title="profile" />
 
         <item
-            android:id="@+id/settings_item"
-            android:icon="@drawable/ic_settings"
-            android:title="Settings" />
+            android:id="@+id/empty_item"
+            android:title="" />
+
+
+
+
 
 
     </group>
 
     <item android:title="">
         <menu>
-            <item
-                android:id="@+id/invite_item"
-                android:icon="@drawable/ic_person_add"
-                android:title="Invite Friends" />
+
             <item
                 android:id="@+id/logout_item"
                 android:icon="@drawable/logout"

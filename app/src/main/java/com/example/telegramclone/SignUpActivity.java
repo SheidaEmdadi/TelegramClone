@@ -1,10 +1,8 @@
 package com.example.telegramclone;
 
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.ProgressDialog;
 import android.content.Intent;
@@ -21,11 +19,7 @@ import com.parse.ParseUser;
 import com.parse.SignUpCallback;
 
 
-import java.util.UUID;
-
 import de.hdodenhof.circleimageview.CircleImageView;
-
-import static android.widget.Toast.LENGTH_SHORT;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -102,7 +96,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private void findViews() {
 
-        imgProfile = findViewById(R.id.imgProfile);
+        imgProfile = findViewById(R.id.imgProfileSignUp);
         edtEmailSignUp = findViewById(R.id.edtEmailSignUp);
         edtUserNameSignUp = findViewById(R.id.edtUserNameSignUp);
         edtPasswordSignUp = findViewById(R.id.edtPasswordSignUp);

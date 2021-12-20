@@ -1,21 +1,23 @@
 package com.example.telegramclone;
 
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
-import android.content.Context;
+import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
-import android.text.Layout;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
+import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
-import com.example.telegramclone.R;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -32,10 +34,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayList<String> chatsList;
     private ArrayAdapter adapter;
     private String selectedUser;
-    private LinearLayout chatBox;
+    private TextView txtChatName;
 
 
-
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,15 +45,32 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
+
         selectedUser = getIntent().getStringExtra("selectedUser");
 
-        findViewById(R.id.button_chatbox_send).setOnClickListener(this);
+
+
+        findViewById(R.id.fab).setOnClickListener(this);
         chatsList = new ArrayList();
 
-        chatBox = findViewById(R.id.layout_chatbox);
-
-
         chatListView = findViewById(R.id.chatListView);
+        txtChatName = findViewById(R.id.txtChatName);
+
+        txtChatName.setText(selectedUser);
+
+
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+        toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
+
+
+
+
+
+
 
         adapter = new ArrayAdapter(this, R.layout.list1_clone2, chatsList);
         chatListView.setAdapter(adapter);
@@ -66,6 +85,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             secondUserChatQuery.whereEqualTo("sender", selectedUser);
             secondUserChatQuery.whereEqualTo("recipient", ParseUser.getCurrentUser().getUsername());
+
+
 
             ArrayList<ParseQuery<ParseObject>> allQueries = new ArrayList<>();
             allQueries.add(firstUserChatQuery);
@@ -86,13 +107,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             if (chatObject.get("sender").equals(ParseUser.getCurrentUser().getUsername())) {
                                 message = ParseUser.getCurrentUser().getUsername() + ": " + message;
 //                                messageText.setText(message);
-//                                nameText.setText(ParseUser.getCurrentUser().getUsername());
 
                             }
                             if (chatObject.get("sender").equals(selectedUser)) {
                                 message = selectedUser + ": " + message;
 //                                messageText.setText(message);
-//                                nameText.setText(ParseUser.getCurrentUser().getUsername());
 
                             }
 
@@ -121,7 +140,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    chatsList.add(ParseUser.getCurrentUser().getUsername()+": "+ edtMessage.getText().toString());
+                    chatsList.add(ParseUser.getCurrentUser().getUsername() + ": " + edtMessage.getText().toString());
                     adapter.notifyDataSetChanged();
                     edtMessage.setText("");
                 }
@@ -129,7 +148,15 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         });
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                this.finish();
+                return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
 
 
 }

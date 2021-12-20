@@ -17,7 +17,22 @@
         android:background="@color/blue"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        >
+
+        <TextView
+            android:id="@+id/txtChatName"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="name"
+            android:layout_marginTop="20dp"
+            android:layout_margin="10dp"
+            android:textSize="22sp"
+            android:textColor="@color/white"
+            />
+
+    </androidx.appcompat.widget.Toolbar>
+
 
     <ListView
         android:id="@+id/chatListView"
@@ -25,40 +40,42 @@
         android:layout_height="0dp"
         android:layout_weight="9"/>
     <LinearLayout
-        android:id="@+id/layout_chatbox"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_marginBottom="10dp"
-        android:minHeight="48dp">
+            android:id="@+id/linearLayoutChat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="#BDBDBD"
+            android:orientation="horizontal"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
         <EditText
             android:id="@+id/edittext_chatbox"
-            android:hint="Enter message"
-            android:background="@android:color/transparent"
+            android:hint="Message"
+            android:background="@android:color/white"
             android:layout_gravity="center"
             android:layout_marginLeft="16dp"
             android:layout_marginRight="16dp"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:padding="15dp"
             android:layout_height="wrap_content"
             android:maxLines="6"/>
 
-        <Button
-            android:id="@+id/button_chatbox_send"
-            android:layout_width="64dp"
-            android:layout_height="48dp"
-            android:layout_gravity="bottom"
-            android:background="@color/blue"
-            android:textColor="@color/button_text_color"
-            android:clickable="true"
-            android:gravity="center"
-            android:text="SEND"
-            android:textSize="14dp" />
+            <com.google.android.material.floatingactionbutton.FloatingActionButton
+                android:id="@+id/fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:clickable="true"
+                android:padding="15dp"
+                app:backgroundTint="@color/blue"
+                app:srcCompat="@drawable/ic_send" />
 
-    </LinearLayout>
+        </LinearLayout>
 
 </LinearLayout>
+
 
 
 

@@ -26,14 +26,14 @@ import com.parse.ParseUser;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ContactsFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
+public class FollowingFragment extends Fragment implements AdapterView.OnItemClickListener, AdapterView.OnItemLongClickListener {
 
     private ListView listView;
     private ArrayList<String> arrayList;
     private ArrayAdapter arrayAdapter;
 //    private String followedUser;
 
-    public ContactsFragment() {
+    public FollowingFragment() {
         // Required empty public constructor
     }
 
@@ -52,8 +52,8 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         TextView txtLoadingUsers = view.findViewById(R.id.txtLoadingUsers);
 
-        listView.setOnItemClickListener(ContactsFragment.this);
-        listView.setOnItemLongClickListener(ContactsFragment.this);
+        listView.setOnItemClickListener(FollowingFragment.this);
+        listView.setOnItemLongClickListener(FollowingFragment.this);
         try {
             ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
             parseQuery.whereContainedIn("username", ParseUser.getCurrentUser().getList("following"));
@@ -72,6 +72,9 @@ public class ContactsFragment extends Fragment implements AdapterView.OnItemClic
                                 txtLoadingUsers.animate().alpha(0).setDuration(2000);
                                 listView.setVisibility(View.VISIBLE);
 
+                            }
+                            else{
+                                txtLoadingUsers.setText("No users yet!");
                             }
                         }
                     } catch (Exception ex) {

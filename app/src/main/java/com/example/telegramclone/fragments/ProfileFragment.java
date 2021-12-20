@@ -11,7 +11,7 @@ import androidx.fragment.app.Fragment;
 
 import com.example.telegramclone.R;
 
-public class SavedMessagesFragment extends Fragment {
+public class ProfileFragment extends Fragment {
 
     @Nullable
     @Override
