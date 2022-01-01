@@ -28,6 +28,7 @@ import com.parse.SaveCallback;
 import java.util.ArrayList;
 import java.util.List;
 
+
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
     private ListView chatListView;
@@ -35,6 +36,8 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
     private ArrayAdapter adapter;
     private String selectedUser;
     private TextView txtChatName;
+
+
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -72,8 +75,10 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
-        adapter = new ArrayAdapter(this, R.layout.list1_clone2, chatsList);
-        chatListView.setAdapter(adapter);
+//        adapter = new ArrayAdapter(this, R.layout.list1_clone2, chatsList);
+//        adapter = new ArrayAdapter(this, R.layout.card_received,
+//                R.id.textViewReceived, chatsList);
+//        chatListView.setAdapter(adapter);
 
         try {
 
@@ -114,6 +119,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 //                                messageText.setText(message);
 
                             }
+
 
                             chatsList.add(message);
                         }

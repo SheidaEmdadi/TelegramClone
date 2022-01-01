@@ -41,14 +41,15 @@ public class FollowingFragment extends Fragment implements AdapterView.OnItemCli
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_contacts, container, false);
+        View view = inflater.inflate(R.layout.fragment_following, container, false);
 
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refreshLayout);
 
         listView = view.findViewById(R.id.listView);
         arrayList = new ArrayList();
-        arrayAdapter = new ArrayAdapter(getContext(), R.layout.list1_clone2, arrayList);
+        arrayAdapter = new ArrayAdapter(getContext(), R.layout.card_following,
+                R.id.txtCardFollowing, arrayList);
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         TextView txtLoadingUsers = view.findViewById(R.id.txtLoadingUsers);
 

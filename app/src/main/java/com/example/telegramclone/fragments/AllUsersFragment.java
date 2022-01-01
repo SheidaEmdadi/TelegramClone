@@ -53,6 +53,8 @@ public class AllUsersFragment extends Fragment implements AdapterView.OnItemClic
         listView = view.findViewById(R.id.listView);
         arrayList = new ArrayList();
         arrayAdapter = new ArrayAdapter(getContext(), R.layout.list1_clone, arrayList);
+//        arrayAdapter = new ArrayAdapter(getContext(), R.layout.card_all_users,
+//                R.id.txtCardAllUsers, arrayList);
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         TextView txtLoadingUsers = view.findViewById(R.id.txtLoadingUsers);
 
@@ -163,51 +165,49 @@ public class AllUsersFragment extends Fragment implements AdapterView.OnItemClic
         });
     }
 
-    @Override
-    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-        return false;
-    }
-
 //    @Override
 //    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+//        return false;
+//    }
 
-//        ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
-//        parseQuery.whereEqualTo("username", arrayList.get(position));
-//        parseQuery.getFirstInBackground(new GetCallback<ParseUser>() {
-//            @Override
-//            public void done(ParseUser user, ParseException e) {
-//                if (user != null && e == null) {
-//
-//                    final FlatDialog flatDialog = new FlatDialog(getActivity());
-//                    flatDialog.setTitle(user.getUsername())
-//                            .setSubtitle("Bio: " + user.get("profileBio") + "\n" +
-//                                    "Profession: " + user.get("profileProfession") + "\n" +
-//                                    "Hobbies: " + user.get("profileHobbies") + "\n" +
-//                                    "Favourite Sports: " + user.get("profileFavSport"))
-//                            .setIcon(R.drawable.person)
-//                            .setFirstButtonText("Posts")
-//                            .setSecondButtonText("CANCEL")
-//                            .withFirstButtonListner(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View v) {
-//                                    Intent intent = new Intent(getContext(), UsersPostsActivity.class);
+    @Override
+    public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+        ParseQuery<ParseUser> parseQuery = ParseUser.getQuery();
+        parseQuery.whereEqualTo("username", arrayList.get(position));
+        parseQuery.getFirstInBackground(new GetCallback<ParseUser>() {
+            @Override
+            public void done(ParseUser user, ParseException e) {
+                if (user != null && e == null) {
+
+                    final FlatDialog flatDialog = new FlatDialog(getActivity());
+                    flatDialog.setTitle(user.getUsername())
+                            .setSubtitle("Bio: " + user.get("profileBio") + "\n")
+                            .setIcon(R.drawable.circle_profile)
+                            .setFirstButtonText("Posts")
+                            .setSecondButtonText("CANCEL")
+                            .withFirstButtonListner(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    //todo: safe posto ok kon
+//                                    Intent intent = new Intent(getContext(), AllUsersFragment.class);
 //                                    intent.putExtra("username", arrayList.get(position));
 //                                    startActivity(intent);
-//                                }
-//                            })
-//                            .withSecondButtonListner(new View.OnClickListener() {
-//                                @Override
-//                                public void onClick(View view) {
-//                                    flatDialog.dismiss();
-//                                }
-//                            })
-//                            .show();
-//
-//
-//                }
-//            }
-//        });
+                                }
+                            })
+                            .withSecondButtonListner(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View view) {
+                                    flatDialog.dismiss();
+                                }
+                            })
+                            .show();
 
-//        return true;
-//    }
+
+                }
+            }
+        });
+
+        return true;
+    }
 }

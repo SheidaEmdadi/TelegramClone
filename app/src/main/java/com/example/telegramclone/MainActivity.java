@@ -24,7 +24,6 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import com.example.telegramclone.fragments.AllUsersFragment;
 import com.example.telegramclone.fragments.FollowingFragment;
-import com.example.telegramclone.fragments.NewGroupFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.FindCallback;
 import com.parse.GetDataCallback;
@@ -163,13 +162,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         drawer.addDrawerListener(toggle);
         toggle.syncState();
 
-        if (savedInstanceState == null) {
-            getSupportFragmentManager().beginTransaction().
-                    replace(R.id.fragment_container,
-                            new NewGroupFragment()
-                    ).commit();
-            navigationView.setCheckedItem(R.id.nav_view);
-        }
+
 
 //        FloatingActionButton fab = findViewById(R.id.fabChat);
 //        fab.setOnClickListener(new View.OnClickListener() {
@@ -220,15 +213,7 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 
         switch (item.getItemId()) {
-            case R.id.chat_screen_item:
 
-                getSupportFragmentManager().beginTransaction().
-                        replace(R.id.fragment_container,
-                                new NewGroupFragment()
-                        ).commit();
-//                Intent mintent = new Intent(MainActivity.this, ChatScreenActivity.class);
-//                startActivity(mintent);
-                break;
             case R.id.all_users_item:
 
                 getSupportFragmentManager().beginTransaction().
