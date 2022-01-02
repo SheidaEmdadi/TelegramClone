@@ -4,54 +4,50 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 
-import android.app.ProgressDialog;
 import android.content.Intent;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
+import android.widget.AbsListView;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 
 import com.example.telegramclone.fragments.AllUsersFragment;
 import com.example.telegramclone.fragments.FollowingFragment;
 import com.google.android.material.navigation.NavigationView;
 import com.parse.FindCallback;
-import com.parse.GetDataCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
-import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-import com.shashank.sony.fancytoastlib.FancyToast;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+
+public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener{
 
     DrawerLayout drawer;
     NavigationView navigationView;
     TextView txtUserNameDrawer;
-    String name;
     ImageView profileImageView;
-//    private LinearLayout linearLayout;
-//    TextView txt;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -88,69 +84,69 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 //            }
 //        });
 
-        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("Photo");
-        parseQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
-        parseQuery.orderByDescending("createdAt");
+//        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("Photo");
+//        parseQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+//        parseQuery.orderByDescending("createdAt");
+//
+//        ProgressDialog dialog = new ProgressDialog(this);
+//        dialog.setMessage("Loading...");
+//        dialog.show();
 
-        ProgressDialog dialog = new ProgressDialog(this);
-        dialog.setMessage("Loading...");
-        dialog.show();
-
-        parseQuery.findInBackground(new FindCallback<ParseObject>() {
-            @Override
-            public void done(List<ParseObject> objects, ParseException e) {
-                if (objects.size() > 0 && e == null) {
-
-                    for (ParseObject post : objects) {
-
-//                        TextView postDescription = new TextView(UsersPostsActivity.this);
-
-//                        if (post.get("image_des") != null) {
-//                            postDescription.setText(post.get("image_des") + "");
-//                        } else if (post.get("image_des") == null) {
-//                            postDescription.setText(" ");
-//                        }
-                        ParseFile postPicture = (ParseFile) post.get("picture");
-                        postPicture.getDataInBackground(new GetDataCallback() {
-                            @Override
-                            public void done(byte[] data, ParseException e) {
-
-                                if (data != null && e == null) {
-
-                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
-//                                    ImageView postImageView = new ImageView(MainActivity.this);
-                                    LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                    imageViewParams.setMargins(5, 5, 5, 5);
-//                                    profileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//                                    profileImageView.setImageBitmap(bitmap);
-
-                                    LinearLayout.LayoutParams desParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-                                    desParams.setMargins(5, 5, 5, 5);
-//                                    postDescription.setLayoutParams(desParams);
-//                                    postDescription.setGravity(Gravity.CENTER);
-//                                    postDescription.setBackgroundColor(Color.GRAY);
-//                                    postDescription.setTextColor(Color.BLACK);
-//                                    postDescription.setTextSize(20f);
+//        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+//            @Override
+//            public void done(List<ParseObject> objects, ParseException e) {
+//                if (objects.size() > 0 && e == null) {
+//
+//                    for (ParseObject post : objects) {
+//
+////                        TextView postDescription = new TextView(UsersPostsActivity.this);
+//
+////                        if (post.get("image_des") != null) {
+////                            postDescription.setText(post.get("image_des") + "");
+////                        } else if (post.get("image_des") == null) {
+////                            postDescription.setText(" ");
+////                        }
+//                        ParseFile postPicture = (ParseFile) post.get("picture");
+//                        postPicture.getDataInBackground(new GetDataCallback() {
+//                            @Override
+//                            public void done(byte[] data, ParseException e) {
+//
+//                                if (data != null && e == null) {
+//
+//                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+////                                    ImageView postImageView = new ImageView(MainActivity.this);
+//                                    LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                                    imageViewParams.setMargins(5, 5, 5, 5);
+////                                    profileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+////                                    profileImageView.setImageBitmap(bitmap);
+//
+//                                    LinearLayout.LayoutParams desParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                                    desParams.setMargins(5, 5, 5, 5);
+////                                    postDescription.setLayoutParams(desParams);
+////                                    postDescription.setGravity(Gravity.CENTER);
+////                                    postDescription.setBackgroundColor(Color.GRAY);
+////                                    postDescription.setTextColor(Color.BLACK);
+////                                    postDescription.setTextSize(20f);
+////
+////
+////                                    linearLayout.addView(postImageView);
+////                                    linearLayout.addView(postDescription);
+//
+//                                }
+//                            }
+//                        });
+//
+//                    }
+//                } else {
+//                    FancyToast.makeText(MainActivity.this,   " has no posts yet :(", FancyToast.LENGTH_LONG, FancyToast.INFO, true).show();
 //
 //
-//                                    linearLayout.addView(postImageView);
-//                                    linearLayout.addView(postDescription);
-
-                                }
-                            }
-                        });
-
-                    }
-                } else {
-                    FancyToast.makeText(MainActivity.this,   " has no posts yet :(", FancyToast.LENGTH_LONG, FancyToast.INFO, true).show();
-
-
-                    finish();
-                }
-
-                dialog.dismiss();
-            }
-        });
+////                    finish();
+//                }
+//
+//                dialog.dismiss();
+//            }
+//        });
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
@@ -259,9 +255,11 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         return true;
     }
+
+
 }
 
-//todo: tu safe asli vaqti back mizani az acc logout nashe
+
+
 //todo 2: ax profile
-//todo 3 : esm profile namayesh nemide
 //todo 4 : ta yekio follow nakoni nemitoni bahash chat koni

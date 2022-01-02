@@ -4,18 +4,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
-import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageButton;
-import android.widget.LinearLayout;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
@@ -31,13 +28,15 @@ import java.util.List;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private ListView chatListView;
-    private ArrayList<String> chatsList;
-    private ArrayAdapter adapter;
+//    private ListView chatListView;
+    //    private ArrayList<String> chatsList;
+//    private ArrayAdapter adapter;
     private String selectedUser;
     private TextView txtChatName;
 
-
+    MessageAdapter messageAdapter;
+    List<ModelClass> list;
+    RecyclerView rv;
 
 
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
@@ -52,15 +51,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         selectedUser = getIntent().getStringExtra("selectedUser");
 
 
-
         findViewById(R.id.fab).setOnClickListener(this);
-        chatsList = new ArrayList();
+//        chatsList = new ArrayList();
 
-        chatListView = findViewById(R.id.chatListView);
+
+        rv = findViewById(R.id.rvChat);
+        rv.setLayoutManager(new LinearLayoutManager(this));
+        list = new ArrayList<>();
+
+
+//        chatListView = findViewById(R.id.chatListView);
         txtChatName = findViewById(R.id.txtChatName);
 
         txtChatName.setText(selectedUser);
-
 
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -69,16 +72,13 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-
-
-
-
-
-
-//        adapter = new ArrayAdapter(this, R.layout.list1_clone2, chatsList);
 //        adapter = new ArrayAdapter(this, R.layout.card_received,
 //                R.id.textViewReceived, chatsList);
 //        chatListView.setAdapter(adapter);
+//
+//
+//        adapter = new ArrayAdapter(this, R.layout.list1_clone2, chatsList);
+
 
         try {
 
@@ -90,7 +90,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
             secondUserChatQuery.whereEqualTo("sender", selectedUser);
             secondUserChatQuery.whereEqualTo("recipient", ParseUser.getCurrentUser().getUsername());
-
 
 
             ArrayList<ParseQuery<ParseObject>> allQueries = new ArrayList<>();
@@ -106,24 +105,46 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
                     if (objects.size() > 0 && e == null) {
                         for (ParseObject chatObject : objects) {
+
                             String message = chatObject.get("message") + "";
+                            String sender = chatObject.get("sender") + "";
+
+                            ModelClass model = new ModelClass(message, sender);
+
+                            list.add(model);
+                            messageAdapter = new MessageAdapter(list, sender);
+
+                            messageAdapter.notifyDataSetChanged();
+
+                            rv.scrollToPosition(list.size() - 1);
+                            rv.setAdapter(messageAdapter);
 
 
-                            if (chatObject.get("sender").equals(ParseUser.getCurrentUser().getUsername())) {
-                                message = ParseUser.getCurrentUser().getUsername() + ": " + message;
-//                                messageText.setText(message);
-
-                            }
-                            if (chatObject.get("sender").equals(selectedUser)) {
-                                message = selectedUser + ": " + message;
-//                                messageText.setText(message);
-
-                            }
+//                            chatListView.setAdapter(messageAdapter);
 
 
-                            chatsList.add(message);
+//                            String message = chatObject.get("message") + "";
+//
+//
+//                            if (chatObject.get("sender").equals(ParseUser.getCurrentUser().getUsername())) {
+//
+//                                message = ParseUser.getCurrentUser().getUsername() + ": " + message;
+////                                messageText.setText(message);
+//
+//                            }
+//                            if (chatObject.get("sender").equals(selectedUser)) {
+//
+//                                message = selectedUser + ": " + message;
+////                                messageText.setText(message);
+//
+//                            }
+
+
+//                            chatsList.add(message);
                         }
-                        adapter.notifyDataSetChanged();
+
+
+//                        adapter.notifyDataSetChanged();
 
                     }
                 }
@@ -132,6 +153,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             e.printStackTrace();
         }
     }
+
 
     @Override
     public void onClick(View v) {
@@ -146,8 +168,19 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    chatsList.add(ParseUser.getCurrentUser().getUsername() + ": " + edtMessage.getText().toString());
-                    adapter.notifyDataSetChanged();
+                    String message = edtMessage.getText().toString();
+                    String sender = ParseUser.getCurrentUser().getUsername();
+
+                    ModelClass model = new ModelClass(message, sender);
+
+                    list.add(model);
+                    messageAdapter = new MessageAdapter(list, sender);
+
+                    messageAdapter.notifyDataSetChanged();
+
+                    rv.scrollToPosition(list.size() - 1);
+                    rv.setAdapter(messageAdapter);
+
                     edtMessage.setText("");
                 }
             }

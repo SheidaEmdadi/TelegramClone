@@ -31,10 +31,10 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public MessageViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
 
-        View view ;
-        if (viewType ==send){
+        View view;
+        if (viewType == send) {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_send, parent, false);
-        }else {
+        } else {
             view = LayoutInflater.from(parent.getContext()).inflate(R.layout.card_received, parent, false);
         }
 
@@ -44,6 +44,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder holder, int position) {
 
+        holder.textView.setText(list.get(position).getMessage());
     }
 
     @Override
@@ -57,6 +58,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
         public MessageViewHolder(@NonNull View itemView) {
             super(itemView);
+
+            if (status) {
+                textView = itemView.findViewById(R.id.textViewSend);
+            } else {
+                textView = itemView.findViewById(R.id.textViewReceived);
+            }
+
         }
     }
 
@@ -65,7 +73,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
         if (list.get(position).getFrom().equals(username)) {
             status = true;
             return send;
-        }else {
+        } else {
             status = false;
             return receive;
         }

@@ -8,13 +8,14 @@
 
     <Button
         android:id="@+id/btnSignUp"
-        android:layout_width="150dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:padding="15dp"
         android:layout_marginTop="30dp"
-        android:background="@color/blue"
+        android:background="@drawable/button_shape"
         android:text="Sign Up"
         android:textColor="#FFFFFF"
-        android:textSize="25sp"
+        android:textSize="20sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.5"
