@@ -14,23 +14,18 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
-import androidx.viewpager.widget.ViewPager;
 
 
-import com.example.telegramclone.Adapters.TabAdapter;
 import com.example.telegramclone.fragments.AllUsersFragment;
 import com.example.telegramclone.fragments.FollowingFragment;
 import com.example.telegramclone.fragments.TweetsFragment;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.navigation.NavigationView;
-import com.google.android.material.tabs.TabLayout;
 import com.parse.FindCallback;
 import com.parse.LogOutCallback;
 import com.parse.ParseException;
@@ -39,7 +34,6 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 
@@ -51,9 +45,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     ImageView profileImageView;
 
 
-
-
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -62,6 +53,101 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        navigationView = findViewById(R.id.nav_view);
+        drawer = findViewById(R.id.drawer_layout);
+        profileImageView = findViewById(R.id.profile_image);
+//        txt = findViewById(R.id.username_drawer);
+//        linearLayout = findViewById(R.id.linearLayout);
+
+
+        View header = navigationView.getHeaderView(0);
+        txtUserNameDrawer = (TextView) header.findViewById(R.id.username_drawer);
+
+
+        NavigationView navigationView = findViewById(R.id.nav_view);
+        navigationView.setNavigationItemSelectedListener(this);
+
+        final ParseUser parseUser = ParseUser.getCurrentUser();
+
+        if (parseUser.get("username") == null) {
+            txtUserNameDrawer.setText("");
+        } else {
+            txtUserNameDrawer.setText(parseUser.get("username").toString());
+        }
+//        ParseUser user = new ParseUser();
+//        String objId = user.getObjectId();
+
+//        profileImageView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+//                startActivity(intent);
+//            }
+//        });
+
+//        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("Photo");
+//        parseQuery.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+//        parseQuery.orderByDescending("createdAt");
+//
+//        ProgressDialog dialog = new ProgressDialog(this);
+//        dialog.setMessage("Loading...");
+//        dialog.show();
+
+//        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+//            @Override
+//            public void done(List<ParseObject> objects, ParseException e) {
+//                if (objects.size() > 0 && e == null) {
+//
+//                    for (ParseObject post : objects) {
+//
+////                        TextView postDescription = new TextView(UsersPostsActivity.this);
+//
+////                        if (post.get("image_des") != null) {
+////                            postDescription.setText(post.get("image_des") + "");
+////                        } else if (post.get("image_des") == null) {
+////                            postDescription.setText(" ");
+////                        }
+//                        ParseFile postPicture = (ParseFile) post.get("picture");
+//                        postPicture.getDataInBackground(new GetDataCallback() {
+//                            @Override
+//                            public void done(byte[] data, ParseException e) {
+//
+//                                if (data != null && e == null) {
+//
+//                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+////                                    ImageView postImageView = new ImageView(MainActivity.this);
+//                                    LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                                    imageViewParams.setMargins(5, 5, 5, 5);
+////                                    profileImageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+////                                    profileImageView.setImageBitmap(bitmap);
+//
+//                                    LinearLayout.LayoutParams desParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+//                                    desParams.setMargins(5, 5, 5, 5);
+////                                    postDescription.setLayoutParams(desParams);
+////                                    postDescription.setGravity(Gravity.CENTER);
+////                                    postDescription.setBackgroundColor(Color.GRAY);
+////                                    postDescription.setTextColor(Color.BLACK);
+////                                    postDescription.setTextSize(20f);
+////
+////
+////                                    linearLayout.addView(postImageView);
+////                                    linearLayout.addView(postDescription);
+//
+//                                }
+//                            }
+//                        });
+//
+//                    }
+//                } else {
+//                    FancyToast.makeText(MainActivity.this,   " has no posts yet :(", FancyToast.LENGTH_LONG, FancyToast.INFO, true).show();
+//
+//
+////                    finish();
+//                }
+//
+//                dialog.dismiss();
+//            }
+//        });
 
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this,
