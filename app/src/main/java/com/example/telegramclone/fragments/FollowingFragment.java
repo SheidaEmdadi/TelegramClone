@@ -14,6 +14,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -59,8 +60,8 @@ public class FollowingFragment extends Fragment implements AdapterView.OnItemCli
 
 //        imgProfileCard =view.findViewById(R.id.imgProfileCard);
 
-        CardView cardView = view.findViewById(R.id.card_following);
-        imgProfileCard = (ImageView)cardView.findViewById(R.id.imgProfileCard);
+        View v = getLayoutInflater().inflate(R.layout.card_following, container);
+        imgProfileCard = (ImageView)v.findViewById(R.id.imgProfileCard);
 
         listView = view.findViewById(R.id.listView);
         arrayList = new ArrayList();
