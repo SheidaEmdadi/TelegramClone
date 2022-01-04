@@ -13,25 +13,35 @@ import android.content.pm.PackageManager;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.parse.DeleteCallback;
+import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.io.ByteArrayOutputStream;
+import java.util.List;
 
 public class ProfileActivity extends AppCompatActivity {
 
@@ -39,8 +49,7 @@ public class ProfileActivity extends AppCompatActivity {
     Button btnUpdateProfile;
     private ImageView imgProfile;
     Bitmap receivedImageBitmap;
-    private static final int PICK_IMAGE = 100;
-    Uri imageUri;
+
 
 
     @Override
@@ -62,10 +71,9 @@ public class ProfileActivity extends AppCompatActivity {
         edtProfileUserName = findViewById(R.id.edtProfileUserName);
         edtProfileBio = findViewById(R.id.edtProfileBio);
         btnUpdateProfile = findViewById(R.id.btnUpdateProfile);
-//        btnImgProfile = findViewById(R.id.btnImgProfile);
         imgProfile = findViewById(R.id.imgProfile);
 
-        ParseObject parseObject = new ParseObject("Photo");
+
 
         imgProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -98,40 +106,6 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-//        btnImgProfile.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                if (receivedImageBitmap != null) {
-//
-//                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//                    receivedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-//                    byte[] bytes = byteArrayOutputStream.toByteArray();
-//                    ParseFile parseFile = new ParseFile("pic.png", bytes);
-//                    parseObject.put("picture", parseFile);
-//                    parseObject.put("username", ParseUser.getCurrentUser().getUsername());
-//                    final ProgressDialog dialog = new ProgressDialog(ProfileActivity.this);
-//                    dialog.setMessage("Loading...");
-//                    dialog.show();
-//                    parseObject.saveInBackground(new SaveCallback() {
-//                        @Override
-//                        public void done(ParseException e) {
-//                            if (e == null) {
-//                                FancyToast.makeText(ProfileActivity.this, "Done !", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
-//
-//                            } else {
-//                                FancyToast.makeText(ProfileActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
-//                            }
-//                            dialog.dismiss();
-//                        }
-//                    });
-//
-//                } else {
-//                    FancyToast.makeText(ProfileActivity.this, "you gotta select an image!", FancyToast.LENGTH_LONG, FancyToast.INFO, true).show();
-//                }
-//            }
-//        });
-
 
         btnUpdateProfile.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -142,61 +116,122 @@ public class ProfileActivity extends AppCompatActivity {
                     } else {
                         parseUser.setUsername(edtProfileUserName.getText().toString());
                     }
-                    if (edtProfileBio.getText().toString().equals("")) {
-                        parseUser.put("profileBio", "Hey! I'm using " + getString(R.string.app_name) + ".");
-                    } else {
-                        parseUser.put("profileBio", edtProfileBio.getText().toString());
-                    }
+                    parseUser.put("profileBio", edtProfileBio.getText().toString());
 
                     parseUser.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {
                             if (e == null) {
-                                FancyToast.makeText(ProfileActivity.this, "profile updated!", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
 
 
                             } else {
                                 FancyToast.makeText(ProfileActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
                             }
-//                            dialog.dismiss();
                         }
                     });
 
+                    if (receivedImageBitmap != null) {
 
-//
-                    Intent intent = new Intent(ProfileActivity.this, MainActivity.class);
-                    startActivity(intent);
+                            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                            receivedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
+                            byte[] bytes = byteArrayOutputStream.toByteArray();
+                            ParseFile parseFile = new ParseFile("pic.png", bytes);
+                        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("Photo");
+
+                        parseQuery.whereEqualTo("username", parseUser.getUsername());
+
+                        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+                            @Override
+                            public void done(List<ParseObject> objects, ParseException e) {
+                                if (objects.size() > 0 && e == null) {
+
+                                    for (ParseObject post : objects) {
+
+                                        post.deleteInBackground(new DeleteCallback() {
+                                            @Override
+                                            public void done(ParseException e) {
+//                                                FancyToast.makeText(ProfileActivity.this,"Deleted !",FancyToast.LENGTH_LONG,FancyToast.SUCCESS,true).show();
+
+                                            }
+                                        });
+
+
+                                    }
+                                }
+                            }
+                        });
+
+                        ParseObject parseObject = new ParseObject("Photo");
+                            parseObject.put("picture", parseFile);
+                            parseObject.put("username", ParseUser.getCurrentUser().getUsername());
+                            final ProgressDialog dialog = new ProgressDialog(ProfileActivity.this);
+                            dialog.setMessage("Loading...");
+                            dialog.show();
+                            parseObject.saveInBackground(new SaveCallback() {
+                                @Override
+                                public void done(ParseException e) {
+                                    if (e == null) {
+                                        FancyToast.makeText(ProfileActivity.this,"Done !",FancyToast.LENGTH_LONG,FancyToast.SUCCESS,true).show();
+
+                                    } else {
+                                        FancyToast.makeText(ProfileActivity.this,e.getMessage(),FancyToast.LENGTH_LONG,FancyToast.ERROR,true).show();
+                                    }
+                                    dialog.dismiss();
+                                }
+                            });
+
+                    }
+
+
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                if (receivedImageBitmap != null) {
 
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    receivedImageBitmap.compress(Bitmap.CompressFormat.PNG, 100, byteArrayOutputStream);
-                    byte[] bytes = byteArrayOutputStream.toByteArray();
-                    ParseFile parseFile = new ParseFile("pic.png", bytes);
-                    parseObject.put("picture", parseFile);
-                    parseObject.put("username", ParseUser.getCurrentUser().getUsername());
-                    final ProgressDialog dialog = new ProgressDialog(ProfileActivity.this);
-                    dialog.setMessage("Loading...");
-                    dialog.show();
-                    parseObject.saveInBackground(new SaveCallback() {
-                        @Override
-                        public void done(ParseException e) {
-                            if (e == null) {
-//                                FancyToast.makeText(ProfileActivity.this, "Done !", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
 
-                            } else {
-                                FancyToast.makeText(ProfileActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+            }
+        });
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("Photo");
+        parseQuery.whereEqualTo("username", parseUser.getUsername());
+
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading...");
+        dialog.show();
+
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (objects.size() > 0 && e == null) {
+
+                    for (ParseObject post : objects) {
+
+                        ParseFile postPicture = (ParseFile) post.get("picture");
+                        postPicture.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+
+                                if (data != null && e == null) {
+
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    imageViewParams.setMargins(5, 5, 5, 5);
+                                    imgProfile.setImageBitmap(bitmap);
+
+
+
+                                }
                             }
-                            dialog.dismiss();
-                        }
-                    });
+                        });
 
-                } else {
-                    FancyToast.makeText(ProfileActivity.this, "you gotta select an image!", FancyToast.LENGTH_LONG, FancyToast.INFO, true).show();
+                    }
+                }else if(objects.size() == 0){
+                    imgProfile.setImageResource(R.drawable.ic_user);
+                }
+                else {
+                    FancyToast.makeText(ProfileActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
                 }
 
+                dialog.dismiss();
             }
         });
 
@@ -205,12 +240,10 @@ public class ProfileActivity extends AppCompatActivity {
 
 
     private void getChosenImage() {
-//        Toast.makeText(getContext(), "now we can access the images", Toast.LENGTH_SHORT).show();
         Intent intent = new Intent(Intent.ACTION_PICK,
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         startActivityForResult(intent, 2000);
-//        Intent gallery = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI);
-//        startActivityForResult(gallery, PICK_IMAGE);
+
 
     }
 
@@ -230,30 +263,6 @@ public class ProfileActivity extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-//        if (resultCode == RESULT_OK && requestCode == PICK_IMAGE) {
-//            imageUri = data.getData();
-//            imgProfile.setImageURI(imageUri);
-
-
-//        if (requestCode == 2000) {
-//            if (requestCode == Activity.RESULT_OK) {
-//                try {
-//                    Uri selectedImage = data.getData();
-//                    String[] filePathColumn = {MediaStore.Images.Media.DATA};
-//                    Cursor cursor = getActivity().getContentResolver().query(selectedImage,
-//                            filePathColumn, null, null, null);
-//                    cursor.moveToFirst();
-//                    int columnIndex = cursor.getColumnIndex(filePathColumn[0]);
-//                    String picturePath = cursor.getString(columnIndex);
-//                    cursor.close();
-//                    receivedImageBitmap = BitmapFactory.decodeFile(picturePath);
-//                    imgShare.setImageBitmap(receivedImageBitmap);
-//
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//        }
         if (resultCode != RESULT_CANCELED) {
             switch (requestCode) {
                 case 0:
@@ -278,11 +287,6 @@ public class ProfileActivity extends AppCompatActivity {
                                 imgProfile.setImageBitmap(BitmapFactory.decodeFile(picturePath));
                                 cursor.close();
                                 receivedImageBitmap = BitmapFactory.decodeFile(picturePath);
-//                                LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-//                                imageViewParams.setMargins(1, 1, 1, 1);
-//                                imgProfile.setScaleType(ImageView.ScaleType.FIT_CENTER);
-//                                imgProfile.setImageBitmap(decodeSampledBitmapFromResource(getResources(), R.id.imgProfile, 100, 100));
-                              //todo: it crashes when image size is large
                                 imgProfile.setImageBitmap(receivedImageBitmap);
                             }
                         }
@@ -292,72 +296,8 @@ public class ProfileActivity extends AppCompatActivity {
             }
         }
 
-
-//        private void selectImage (Context context){
-//            final CharSequence[] options = {"Take Photo", "Choose from Gallery", "Cancel"};
-//
-//            AlertDialog.Builder builder = new AlertDialog.Builder(context);
-//            builder.setTitle("Choose your profile picture");
-//
-//            builder.setItems(options, new DialogInterface.OnClickListener() {
-//
-//                @Override
-//                public void onClick(DialogInterface dialog, int item) {
-//
-//                    if (options[item].equals("Take Photo")) {
-//                        Intent takePicture = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-//                        startActivityForResult(takePicture, 0);
-//
-//                    } else if (options[item].equals("Choose from Gallery")) {
-//                        Intent pickPhoto = new Intent(Intent.ACTION_PICK, android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
-//                        startActivityForResult(pickPhoto, 1);
-//
-//                    } else if (options[item].equals("Cancel")) {
-//                        dialog.dismiss();
-//                    }
-//                }
-//            });
-//            builder.show();
-//    }
     }
 
-//    public static int calculateInSampleSize(
-//            BitmapFactory.Options options, int reqWidth, int reqHeight) {
-//        // Raw height and width of image
-//        final int height = options.outHeight;
-//        final int width = options.outWidth;
-//        int inSampleSize = 1;
-//
-//        if (height > reqHeight || width > reqWidth) {
-//
-//            final int halfHeight = height / 2;
-//            final int halfWidth = width / 2;
-//
-//            // Calculate the largest inSampleSize value that is a power of 2 and keeps both
-//            // height and width larger than the requested height and width.
-//            while ((halfHeight / inSampleSize) > reqHeight
-//                    && (halfWidth / inSampleSize) > reqWidth) {
-//                inSampleSize *= 2;
-//            }
-//        }
-//
-//        return inSampleSize;
-//    }
-//    public static Bitmap decodeSampledBitmapFromResource(Resources res, int resId,
-//                                                         int reqWidth, int reqHeight) {
-//
-//        // First decode with inJustDecodeBounds=true to check dimensions
-//        final BitmapFactory.Options options = new BitmapFactory.Options();
-//        options.inJustDecodeBounds = true;
-//        BitmapFactory.decodeResource(res, resId, options);
-//
-//        // Calculate inSampleSize
-//        options.inSampleSize = calculateInSampleSize(options, reqWidth, reqHeight);
-//
-//        // Decode bitmap with inSampleSize set
-//        options.inJustDecodeBounds = false;
-//        return BitmapFactory.decodeResource(res, resId, options);
-//    }
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

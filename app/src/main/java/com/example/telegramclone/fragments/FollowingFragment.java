@@ -1,6 +1,9 @@
 package com.example.telegramclone.fragments;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -8,20 +11,28 @@ import android.view.ViewGroup;
 import android.widget.AbsListView;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.telegramclone.ChatActivity;
+import com.example.telegramclone.MainActivity;
 import com.example.telegramclone.R;
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,7 +42,7 @@ public class FollowingFragment extends Fragment implements AdapterView.OnItemCli
     private ListView listView;
     private ArrayList<String> arrayList;
     private ArrayAdapter arrayAdapter;
-//    private String followedUser;
+    ImageView imgProfileCard;
 
     public FollowingFragment() {
         // Required empty public constructor
@@ -45,6 +56,11 @@ public class FollowingFragment extends Fragment implements AdapterView.OnItemCli
 
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refreshLayout);
+
+//        imgProfileCard =view.findViewById(R.id.imgProfileCard);
+
+        CardView cardView = view.findViewById(R.id.card_following);
+        imgProfileCard = (ImageView)cardView.findViewById(R.id.imgProfileCard);
 
         listView = view.findViewById(R.id.listView);
         arrayList = new ArrayList();
@@ -121,6 +137,52 @@ public class FollowingFragment extends Fragment implements AdapterView.OnItemCli
                 }
             });
 
+
+
+            ParseQuery<ParseObject> parseQuery1 = new ParseQuery<ParseObject>("Photo");
+            parseQuery1.whereEqualTo("username", ParseUser.getCurrentUser().getUsername());
+
+            ProgressDialog dialog = new ProgressDialog(getContext());
+            dialog.setMessage("Loading...");
+            dialog.show();
+
+            parseQuery1.findInBackground(new FindCallback<ParseObject>() {
+                @Override
+                public void done(List<ParseObject> objects, ParseException e) {
+                    if (objects.size() > 0 && e == null) {
+
+                        for (ParseObject post : objects) {
+
+                            ParseFile postPicture = (ParseFile) post.get("picture");
+                            postPicture.getDataInBackground(new GetDataCallback() {
+                                @Override
+                                public void done(byte[] data, ParseException e) {
+
+                                    if (data != null && e == null) {
+
+                                        Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                        LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                        imageViewParams.setMargins(5, 5, 5, 5);
+                                        imgProfileCard.setImageBitmap(bitmap);
+
+
+
+                                    }
+                                }
+                            });
+
+                        }
+                    }else if(objects.size() == 0){
+                        imgProfileCard.setImageResource(R.drawable.ic_user);
+                    }
+                    else {
+                        FancyToast.makeText(getContext(), e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+                    }
+
+                    dialog.dismiss();
+                }
+            });
+//todo:
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -1,12 +1,18 @@
 package com.example.telegramclone;
 
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -22,11 +28,14 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 import com.example.telegramclone.Adapters.MessageAdapter;
 import com.example.telegramclone.utils.ModelClass;
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,6 +49,7 @@ public class TweetActivity extends AppCompatActivity implements View.OnClickList
     private ListView viewTweetsListView;
     private TextView txtTweeterName;
     private ArrayAdapter adapter;
+    ImageView imgProfileTweet;
 
 
 
@@ -60,6 +70,8 @@ public class TweetActivity extends AppCompatActivity implements View.OnClickList
         selectedUser = getIntent().getStringExtra("selectedUser");
 
         txtTweeterName = findViewById(R.id.txtChatName);
+        imgProfileTweet = findViewById(R.id.imgProfileTweetView);
+
 
         txtTweeterName.setText(selectedUser + " 's tweets");
 
@@ -144,7 +156,49 @@ public class TweetActivity extends AppCompatActivity implements View.OnClickList
                 }
             }
         });
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("Photo");
+        parseQuery.whereEqualTo("username", selectedUser);
 
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading...");
+        dialog.show();
+
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (objects.size() > 0 && e == null) {
+
+                    for (ParseObject post : objects) {
+
+                        ParseFile postPicture = (ParseFile) post.get("picture");
+                        postPicture.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+
+                                if (data != null && e == null) {
+
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    imageViewParams.setMargins(5, 5, 5, 5);
+                                    imgProfileTweet.setImageBitmap(bitmap);
+
+
+
+                                }
+                            }
+                        });
+
+                    }
+                }else if(objects.size() == 0){
+                    imgProfileTweet.setImageResource(R.drawable.ic_user);
+                }
+                else {
+                    FancyToast.makeText(TweetActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+                }
+
+                dialog.dismiss();
+            }
+        });
 
 
     }

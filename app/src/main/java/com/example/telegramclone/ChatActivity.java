@@ -7,23 +7,32 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.ProgressDialog;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.Build;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.example.telegramclone.Adapters.MessageAdapter;
 import com.example.telegramclone.utils.ModelClass;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
+import com.parse.GetDataCallback;
 import com.parse.ParseException;
+import com.parse.ParseFile;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.shashank.sony.fancytoastlib.FancyToast;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +40,8 @@ import java.util.List;
 
 public class ChatActivity extends AppCompatActivity implements View.OnClickListener {
 
-//    private ListView chatListView;
-    //    private ArrayList<String> chatsList;
-//    private ArrayAdapter adapter;
+    ImageView imgProfileChat;
+
     private String selectedUser;
     private TextView txtChatName;
 
@@ -52,11 +60,11 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
 
 
 
+        imgProfileChat = findViewById(R.id.imgProfileChat);
         selectedUser = getIntent().getStringExtra("selectedUser");
 
 
         findViewById(R.id.fab).setOnClickListener(this);
-//        chatsList = new ArrayList();
 
 
         rv = findViewById(R.id.rvChat);
@@ -64,7 +72,6 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         list = new ArrayList<>();
 
 
-//        chatListView = findViewById(R.id.chatListView);
         txtChatName = findViewById(R.id.txtChatName);
 
         txtChatName.setText(selectedUser);
@@ -76,12 +83,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 
-//        adapter = new ArrayAdapter(this, R.layout.card_received,
-//                R.id.textViewReceived, chatsList);
-//        chatListView.setAdapter(adapter);
-//
-//
-//        adapter = new ArrayAdapter(this, R.layout.list1_clone2, chatsList);
+
 
 
         try {
@@ -123,39 +125,66 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
                             rv.scrollToPosition(list.size() - 1);
                             rv.setAdapter(messageAdapter);
 
-
-//                            chatListView.setAdapter(messageAdapter);
-
-
-//                            String message = chatObject.get("message") + "";
-//
-//
-//                            if (chatObject.get("sender").equals(ParseUser.getCurrentUser().getUsername())) {
-//
-//                                message = ParseUser.getCurrentUser().getUsername() + ": " + message;
-////                                messageText.setText(message);
-//
-//                            }
-//                            if (chatObject.get("sender").equals(selectedUser)) {
-//
-//                                message = selectedUser + ": " + message;
-////                                messageText.setText(message);
-//
-//                            }
+                           }
 
 
-//                            chatsList.add(message);
                         }
 
 
-//                        adapter.notifyDataSetChanged();
 
                     }
-                }
+
             });
         } catch (Exception e) {
             e.printStackTrace();
         }
+
+        ParseQuery<ParseObject> parseQuery = new ParseQuery<ParseObject>("Photo");
+        parseQuery.whereEqualTo("username", selectedUser);
+
+        ProgressDialog dialog = new ProgressDialog(this);
+        dialog.setMessage("Loading...");
+        dialog.show();
+
+        parseQuery.findInBackground(new FindCallback<ParseObject>() {
+            @Override
+            public void done(List<ParseObject> objects, ParseException e) {
+                if (objects.size() > 0 && e == null) {
+
+                    for (ParseObject post : objects) {
+
+                        ParseFile postPicture = (ParseFile) post.get("picture");
+                        postPicture.getDataInBackground(new GetDataCallback() {
+                            @Override
+                            public void done(byte[] data, ParseException e) {
+
+                                if (data != null && e == null) {
+
+                                    Bitmap bitmap = BitmapFactory.decodeByteArray(data, 0, data.length);
+                                    LinearLayout.LayoutParams imageViewParams = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                                    imageViewParams.setMargins(5, 5, 5, 5);
+                                    imgProfileChat.setImageBitmap(bitmap);
+
+
+
+                                }
+                            }
+                        });
+
+                    }
+                }else if(objects.size() == 0){
+                    imgProfileChat.setImageResource(R.drawable.ic_user);
+                }
+                else {
+                    FancyToast.makeText(ChatActivity.this, e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
+                }
+
+                dialog.dismiss();
+            }
+        });
+
+
+
     }
 
 
