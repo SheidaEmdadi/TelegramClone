@@ -1,7 +1,8 @@
-package com.example.telegramclone;
+package com.example.telegramclone.utils;
 
 import android.app.Application;
 
+import com.example.telegramclone.R;
 import com.parse.Parse;
 
 public class App extends Application {

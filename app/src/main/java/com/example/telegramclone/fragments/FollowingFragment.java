@@ -75,7 +75,9 @@ public class FollowingFragment extends Fragment implements AdapterView.OnItemCli
 
                             }
                             else{
-                                txtLoadingUsers.setText("No users yet!");
+                                txtLoadingUsers.setText("you should follow users to chat with them and see their tweets! " +
+                                        "\n" +
+                                        "to follow others, visit \" All users \" tab and click on their name.");
                             }
                         }
                     } catch (Exception ex) {

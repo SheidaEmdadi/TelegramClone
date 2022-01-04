@@ -52,7 +52,7 @@ public class ProfileActivity extends AppCompatActivity {
 
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbarProfile);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         getSupportActionBar().setDisplayShowTitleEnabled(false);
@@ -142,7 +142,11 @@ public class ProfileActivity extends AppCompatActivity {
                     } else {
                         parseUser.setUsername(edtProfileUserName.getText().toString());
                     }
-                    parseUser.put("profileBio", edtProfileBio.getText().toString());
+                    if (edtProfileBio.getText().toString().equals("")) {
+                        parseUser.put("profileBio", "Hey! I'm using " + getString(R.string.app_name) + ".");
+                    } else {
+                        parseUser.put("profileBio", edtProfileBio.getText().toString());
+                    }
 
                     parseUser.saveInBackground(new SaveCallback() {
                         @Override

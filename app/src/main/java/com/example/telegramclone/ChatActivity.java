@@ -15,6 +15,9 @@ import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.telegramclone.Adapters.MessageAdapter;
+import com.example.telegramclone.utils.ModelClass;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.parse.FindCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -48,6 +51,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN);
 
 
+
         selectedUser = getIntent().getStringExtra("selectedUser");
 
 
@@ -66,7 +70,7 @@ public class ChatActivity extends AppCompatActivity implements View.OnClickListe
         txtChatName.setText(selectedUser);
 
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        Toolbar toolbar =  findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         toolbar.setNavigationIcon(R.drawable.ic_baseline_arrow_back_24);
         getSupportActionBar().setDisplayShowTitleEnabled(false);

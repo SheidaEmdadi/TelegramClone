@@ -1,5 +1,6 @@
 package com.example.telegramclone.fragments;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CheckedTextView;
 import android.widget.ListView;
+import android.widget.SimpleAdapter;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,7 +20,9 @@ import androidx.fragment.app.Fragment;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import com.example.flatdialoglibrary.dialog.FlatDialog;
+import com.example.telegramclone.ChatActivity;
 import com.example.telegramclone.R;
+import com.example.telegramclone.TweetActivity;
 import com.parse.FindCallback;
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -47,14 +51,17 @@ public class AllUsersFragment extends Fragment implements AdapterView.OnItemClic
         // Inflate the layout for this fragment
         View view = inflater.inflate(R.layout.fragment_all_users, container, false);
 
+        FancyToast.makeText(getContext(), "long press on user to see profile", FancyToast.LENGTH_LONG, FancyToast.INFO, true).show();
+
 
         final SwipeRefreshLayout swipeRefreshLayout = view.findViewById(R.id.swipe_refreshLayout);
 
         listView = view.findViewById(R.id.listView);
         arrayList = new ArrayList();
+
         arrayAdapter = new ArrayAdapter(getContext(), R.layout.list1_clone, arrayList);
-//        arrayAdapter = new ArrayAdapter(getContext(), R.layout.card_all_users,
-//                R.id.txtCardAllUsers, arrayList);
+//        arrayAdapter = new ArrayAdapter(getContext(), R.layout.list1_clone3,
+//                R.id.checked_text3, arrayList);
         listView.setChoiceMode(AbsListView.CHOICE_MODE_MULTIPLE);
         TextView txtLoadingUsers = view.findViewById(R.id.txtLoadingUsers);
 
@@ -138,6 +145,8 @@ public class AllUsersFragment extends Fragment implements AdapterView.OnItemClic
     @Override
     public void onItemClick (AdapterView < ? > parent, View view,int position, long id){
 
+
+//        CheckedTextView checkedTextView = (CheckedTextView) view.findViewById(R.id.checked_text3);
         CheckedTextView checkedTextView = (CheckedTextView) view;
 
         if (checkedTextView.isChecked()) {
@@ -155,7 +164,7 @@ public class AllUsersFragment extends Fragment implements AdapterView.OnItemClic
             @Override
             public void done(ParseException e) {
                 if (e == null) {
-                    FancyToast.makeText(getContext(), "saved", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
+//                    FancyToast.makeText(getContext(), "saved", FancyToast.LENGTH_LONG, FancyToast.SUCCESS, true).show();
 
                 } else {
                     FancyToast.makeText(getContext(), e.getMessage(), FancyToast.LENGTH_LONG, FancyToast.ERROR, true).show();
@@ -182,17 +191,19 @@ public class AllUsersFragment extends Fragment implements AdapterView.OnItemClic
 
                     final FlatDialog flatDialog = new FlatDialog(getActivity());
                     flatDialog.setTitle(user.getUsername())
-                            .setSubtitle("Bio: " + user.get("profileBio") + "\n")
-                            .setIcon(R.drawable.circle_profile)
-                            .setFirstButtonText("Posts")
-                            .setSecondButtonText("CANCEL")
+                            .setSubtitle("Bio: " + user.get("profileBio")  + "\n")
+                            .setIcon(R.drawable.ic_userr)
+                            .setBackgroundColor(R.color.fd_bg)
+                            .setFirstButtonColor(R.color.blue)
+                            .setSecondButtonColor(R.color.fd_sc)
+                            .setFirstButtonText("Tweets")
+                            .setSecondButtonText("Cancel")
                             .withFirstButtonListner(new View.OnClickListener() {
                                 @Override
                                 public void onClick(View v) {
-                                    //todo: safe posto ok kon
-//                                    Intent intent = new Intent(getContext(), AllUsersFragment.class);
-//                                    intent.putExtra("username", arrayList.get(position));
-//                                    startActivity(intent);
+                                    Intent intent = new Intent(getActivity(), TweetActivity.class);
+                                    intent.putExtra("selectedUser",arrayList.get(position));
+                                    startActivity(intent);
                                 }
                             })
                             .withSecondButtonListner(new View.OnClickListener() {

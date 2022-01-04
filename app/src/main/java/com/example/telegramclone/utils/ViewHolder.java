@@ -1,4 +1,4 @@
-package com.example.telegramclone;
+package com.example.telegramclone.utils;
 
 import android.widget.TextView;
 

@@ -1,4 +1,4 @@
-package com.example.telegramclone;
+package com.example.telegramclone.utils;
 
 public class ModelClass {
 

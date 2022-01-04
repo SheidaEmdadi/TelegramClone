@@ -1,4 +1,4 @@
-package com.example.telegramclone;
+package com.example.telegramclone.Adapters;
 
 import android.content.Context;
 import android.view.LayoutInflater;
@@ -9,6 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.cardview.widget.CardView;
 import androidx.recyclerview.widget.RecyclerView;
+
+import com.example.telegramclone.R;
 
 import java.util.List;
 
